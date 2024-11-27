@@ -1,0 +1,35 @@
+{
+  "miniprogramRoot": "client/dist/",
+  "cloudfunctionRoot": "cloud/functions/",
+  "projectname": "orderDrink",
+  "description": "orderDrink",
+  "appid": "wx76249ceb4430430f",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "minifyWXSS": false,
+    "minifyWXML": false,
+    "swc": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.6.5",
+  "srcMiniprogramRoot": "client/dist/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}
