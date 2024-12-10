@@ -10,19 +10,28 @@ import {
 } from "@nutui/icons-react-taro";
 import "./home.less";
 import BottomSwiper from "../../components/homePage/BottomSwiper";
+import Taro from "@tarojs/taro";
 
 export default function home() {
+  const goToOrder = () => {
+    Taro.switchTab({ url: "/pages/order/order" });
+  };
+
+  const goToActivity = () => {
+    Taro.switchTab({ url: "/pages/activity/activity" });
+  };
+
   return (
     <View class="container">
       <View class="top">
         <View class="box1">
-          <View class="left">
+          <View class="left" onClick={goToOrder}>
             <ShoppingAdd color="#dba853" size={60} />
             <View class="title">门店自取</View>
             <View class="description">提前点单免排队</View>
           </View>
-          <View class="right">
-            <Cart color="#dba853" size={60} />
+          <View class="right" onClick={goToActivity}>
+            <Shop color="#dba853" size={60} />
             <View class="title">到店购买</View>
             <View class="description">囤咖啡买周边</View>
           </View>

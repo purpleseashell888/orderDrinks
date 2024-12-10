@@ -1,8 +1,56 @@
 .tabsPage {
   --nutui-color-primary: #627e0f;
+  position: relative;
 }
 
 .card {
   width: 100%; /* 设置卡片的宽度 */
   height: 200px; /* 设置卡片的高度 */
+}
+
+.shopping {
+  display: flex;
+  position: absolute;
+  bottom: 30px;
+  left: 60px;
+  width: 650px;
+  height: 100px;
+  background-color: #fff;
+  border-radius: 50px;
+  overflow: hidden;
+
+  box-sizing: border-box; /* 关键，确保padding包括在width和height内 */
+  box-shadow: 0px 0px 10px rgba(173, 172, 172, 0.7);
+}
+
+.bag {
+  display: flex;
+  align-items: center;
+  width: 400px;
+  height: 100px;
+  margin-left: 50px;
+  box-sizing: border-box;
+}
+
+.cart {
+  margin: 10px;
+}
+
+.bagContent {
+  padding-left: 30px;
+}
+
+.checkout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 100px;
+  background-color: #627e0f;
+  color: #fff;
+  font-size: 35px;
+}
+
+.price {
+  color: #e57f0c;
 }

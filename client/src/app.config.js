@@ -6,7 +6,11 @@ export default {
     "pages/activity/activity",
     "pages/sales/sales",
     "pages/profile/profile",
+    "pages/checkout/checkout",
+    "pages/delivery/delivery",
+    "pages/address/address",
   ],
+  requiredPrivateInfos: ["chooseAddress"],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",

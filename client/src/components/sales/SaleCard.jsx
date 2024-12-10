@@ -24,7 +24,7 @@ export default function SaleCard() {
       <View>下单时间：</View>
       <Divider />
       <View className="buttonContainer">
-        <Button size="small" className="button">
+        <Button size="mini" className="button">
           取消订单
         </Button>
       </View>

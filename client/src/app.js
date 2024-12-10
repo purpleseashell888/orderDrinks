@@ -1,7 +1,6 @@
 import Taro from "@tarojs/taro";
-
-import "./app.less";
 import { useEffect } from "react";
+import "./app.less";
 
 function App(props) {
   useEffect(() => {
