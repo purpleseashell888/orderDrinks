@@ -1,8 +1,10 @@
 import { View, Text, Button } from "@tarojs/components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Checkbox, Image, TextArea } from "@nutui/nutui-react-taro";
-import "./checkout.less";
+import { useSelector } from "react-redux"; // 引入 useSelector
 import Taro from "@tarojs/taro";
+
+import "./checkout.less";
 
 export default function checkout() {
   const [activeBox, setActiveBox] = useState(1);
@@ -14,6 +16,45 @@ export default function checkout() {
   const [showWays, setShowWays] = useState(true);
 
   const [notes, setNotes] = useState("");
+
+  const [formData, setFormDataState] = useState(null); // 用于存储从 localStorage 中获取的 formData
+
+  // 在 checkout 页面中确保从 Redux 获取最新的 formData
+  const formDataFromRedux = useSelector((state) => state.formData);
+
+  useEffect(() => {
+    if (activeBox === 2) {
+      // 当 showWays 为 false 时，从 localStorage 获取 formData 数据
+      const savedFormData =
+        formDataFromRedux || Taro.getStorageSync("formData");
+      console.log("saved formData:", savedFormData); // 查看存储的 formData 数据
+
+      if (savedFormData) {
+        if (Array.isArray(savedFormData) && savedFormData.length > 0) {
+          // 如果是数组且不为空，取第一个地址
+          setFormDataState(savedFormData[0]);
+        } else if (typeof savedFormData === "object") {
+          // 如果是对象，直接使用该对象
+          setFormDataState(savedFormData);
+        }
+      }
+    } else if (activeBox === 1) {
+      // 当 showWays 为 true 时，将 formData 设置为 null
+      setFormDataState(null);
+    }
+  }, [activeBox, formDataFromRedux]);
+
+  useEffect(() => {
+    // 获取跳转时传递的 activeBox 参数
+    const params = Taro.getCurrentInstance().router.params;
+    const activeBoxFromParams = params.activeBox
+      ? parseInt(params.activeBox)
+      : 1; // 默认为 1（自提）
+
+    // 设置 activeBox
+    setActiveBox(activeBoxFromParams);
+    setShowWays(false);
+  }, []);
 
   // 更新 check1 和 check2 的状态
   const handleCheckBoxChange = (box) => {
@@ -41,11 +82,21 @@ export default function checkout() {
     Taro.navigateTo({ url: "/pages/delivery/delivery" });
   };
 
+  // 点击地址跳转到 delivery 页面
+  const handleAddressClick = () => {
+    Taro.navigateTo({ url: "/pages/delivery/delivery" });
+  };
+
   return (
     <View className="container">
       <View className="position">
         <View className="top">
-          <View className="shop"> 樱花街店（No.12345）&gt; </View>
+          <View className="shop" onClick={handleAddressClick}>
+            {/* 如果 formData 存在，则显示 formData 中的地址 */}
+            {formData && formData.address
+              ? `${formData.address.slice(0, 15)}...`
+              : "樱花街店（No.12345）"}
+          </View>
           <View className="takeaway">
             <View
               className={`box1 ${activeBox === 1 ? "active" : ""}`}
@@ -68,7 +119,16 @@ export default function checkout() {
             </View>
           </View>
         </View>
-        <View className="street">徐汇区樱花街广场26号</View>
+        <View className="street">
+          {formData ? (
+            <>
+              <Text className="username"> {formData.username}</Text>
+              <Text> {formData.phone}</Text>
+            </>
+          ) : (
+            <View>徐汇区樱花街广场26号</View>
+          )}
+        </View>
       </View>
       <View className="drink">
         <View className="up">

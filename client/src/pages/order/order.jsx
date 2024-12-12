@@ -1,10 +1,12 @@
 import { View, Text } from "@tarojs/components";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Image, Tabs } from "@nutui/nutui-react-taro";
 import { Cart } from "@nutui/icons-react-taro";
 import Item from "../../components/orderPage/Item";
-import "./order.less";
 import Taro from "@tarojs/taro";
+import { useSelector } from "react-redux";
+
+import "./order.less";
 
 const items = [
   {
@@ -54,9 +56,43 @@ const items = [
 export default function order() {
   const [tab5value, setTab5value] = useState("0");
 
+  // const [totalQuantity, setTotalQuantity] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(0);
+
   const goToCheckout = () => {
     Taro.navigateTo({ url: "/pages/checkout/checkout" });
   };
+
+  // const cart = useSelector((state) => {
+  //   console.log("Current Redux state", state); // Debugging line
+
+  //   return state.myReducer?.cart || [];
+  // });
+
+  const cart = useSelector((state) => {
+    if (!state.myReducer) {
+      console.error("myReducer not found in state");
+      return [];
+    }
+    console.log("Cart from Redux", state.myReducer.cart);
+    return state.myReducer.cart || []; // 确保返回 cart 或空数组
+  });
+
+  const { totalQuantity, totalPrice } = useMemo(() => {
+    console.log("Calculating totalQuantity and totalPrice for cart:", cart);
+
+    const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+    const totalPrice =
+      Math.round(
+        cart.reduce((acc, item) => acc + item.price * item.quantity, 0) * 100
+      ) / 100;
+
+    console.log("totalQuantity", totalQuantity);
+    console.log("totalPrice", totalPrice);
+
+    return { totalQuantity, totalPrice };
+  }, [cart]); // 仅当 cart 改变时才重新计算
 
   const list5 = [
     {
@@ -72,7 +108,12 @@ export default function order() {
             alt="home"
           />
           {items.map((item, index) => (
-            <Item url={item.url} name={item.name} price={item.price} />
+            <Item
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              id={item.id}
+            />
           ))}
         </View>
       ),
@@ -90,7 +131,12 @@ export default function order() {
             alt="home"
           />
           {items.map((item, index) => (
-            <Item url={item.url} name={item.name} price={item.price} />
+            <Item
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              id={item.id}
+            />
           ))}
         </View>
       ),
@@ -108,7 +154,12 @@ export default function order() {
             alt="home"
           />
           {items.map((item, index) => (
-            <Item url={item.url} name={item.name} price={item.price} />
+            <Item
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              id={item.id}
+            />
           ))}
         </View>
       ),
@@ -126,7 +177,12 @@ export default function order() {
             alt="home"
           />
           {items.map((item, index) => (
-            <Item url={item.url} name={item.name} price={item.price} />
+            <Item
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              id={item.id}
+            />
           ))}
         </View>
       ),
@@ -144,7 +200,12 @@ export default function order() {
             alt="home"
           />
           {items.map((item, index) => (
-            <Item url={item.url} name={item.name} price={item.price} />
+            <Item
+              url={item.url}
+              name={item.name}
+              price={item.price}
+              id={item.id}
+            />
           ))}
         </View>
       ),
@@ -173,17 +234,24 @@ export default function order() {
           </Tabs.TabPane>
         ))}
       </Tabs>
-      <View className="shopping">
-        <View className="bag">
-          <Cart color="#dba853" size={30} className="cart" />
-          <View className="bagContent">
-            预计到手 <Text className="price">&yen; 13.76</Text>
+      {totalQuantity > 0 ? (
+        <View className="shopping">
+          <View className="bag">
+            <Cart color="#dba853" size={30} className="cart" />
+            <View className="circle">{totalQuantity}</View>
+            <View className="bagContent">
+              预计到手 <Text className="price">&yen; {totalPrice}</Text>
+            </View>
+          </View>
+          <View className="checkout" onClick={goToCheckout}>
+            结 算
           </View>
         </View>
-        <View className="checkout" onClick={goToCheckout}>
-          结 算
+      ) : (
+        <View className="shoppingImage">
+          <Cart color="#dba853" size={30} className="cart" />
         </View>
-      </View>
+      )}
     </View>
   );
 }

@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import { Button, Form, Input, Radio, Cell } from "@nutui/nutui-react-taro";
 import { ArrowRight } from "@nutui/icons-react-taro";
 import Taro from "@tarojs/taro";
+import { useDispatch } from "react-redux"; // 引入 useDispatch
+import { setFormData } from "../../redux/actions"; // 引入 action
 
 import "./address.less";
 
 export default function address() {
   const [address, setAddress] = useState("");
+  const dispatch = useDispatch();
 
   const [form] = Form.useForm();
   console.log(form);
@@ -15,7 +18,7 @@ export default function address() {
   const handleChooseAddress = async () => {
     try {
       const res = await Taro.chooseAddress(); // 调用微信的chooseAddress API
-      const fullAddress = `${res.provinceName} ${res.cityName} ${res.countyName} ${res.detailInfo}`;
+      const fullAddress = `${res.cityName} ${res.countyName} ${res.detailInfo}`;
       setAddress(fullAddress); // 将选择的地址显示在表单项中
 
       // 更新表单中的 address 字段
@@ -25,52 +28,23 @@ export default function address() {
     }
   };
 
-  // 提交表单
-  // const handleSubmit = () => {
-  //   console.log(form);
-  //   const values = form.getFieldsValue(); // 获取表单数据
-  // 检查返回值是否为空
-  // if (!values) {
-  //   console.error("表单数据未加载或为空");
-  //   return;
-  // }
-  // console.log(values);
-  // // 将表单数据传递给父页面
-  // const queryParams = encodeURIComponent(JSON.stringify(values));
-  // console.log("Navigating to delivery with data:", queryParams); // 查看即将传递的参数
-  // Taro.navigateTo({
-  //   url: `/pages/delivery/delivery?formData=${queryParams}`,
-  // });
-  // Taro.navigateTo({
-  //   url: "/pages/delivery/delivery",
-  // });
-  // };
-
   const handleSubmit = (values) => {
-    console.log(values); // 输出表单数据
+    // 获取已有的地址列表
+    const savedAddresses = Taro.getStorageSync("formData") || [];
 
-    // 将表单数据传递给父页面
-    const queryParams = encodeURIComponent(JSON.stringify(values));
-    console.log("Navigating to delivery with data:", queryParams);
+    // 将新地址加入到地址列表中
+    savedAddresses.push(values);
 
-    // 跳转到另一个页面并传递数据
+    // 使用 Taro.setStorageSync 保存数据到本地存储
+    Taro.setStorageSync("formData", savedAddresses); // 保存表单数据到本地存储
+
+    // 更新 Redux 数据
+    dispatch(setFormData(savedAddresses));
+
     Taro.navigateTo({
-      url: `/pages/delivery/delivery?formData=${queryParams}`,
+      url: "/pages/delivery/delivery",
     });
   };
-
-  // 获取传递的回调函数
-  // const handleSubmit = async (values) => {
-  //   // 调用父组件的回调函数传递数据
-  //   const pages = Taro.getCurrentPages();
-  //   const prevPage = pages[pages.length - 2]; // 获取上一页
-  //   if (prevPage && typeof prevPage.handleFormData === "function") {
-  //     prevPage.handleFormData(values);
-  //     Taro.navigateBack();
-  //   } else {
-  //     console.error("父页面没有 handleFormData 方法！");
-  //   }
-  // };
 
   return (
     <View className="container">
