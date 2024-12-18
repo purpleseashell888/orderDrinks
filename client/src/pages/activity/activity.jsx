@@ -63,8 +63,9 @@ export default function activity() {
           }
           style={{ margin: "120px auto" }}
         >
-          {list.map((item) => (
+          {list.map((item, index) => (
             <ActivityCard
+              key={index}
               icon={item.icon}
               title={item.title}
               text={item.text}

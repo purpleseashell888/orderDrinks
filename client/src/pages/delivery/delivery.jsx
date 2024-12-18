@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, Button } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import { useEffect, useState } from "react";

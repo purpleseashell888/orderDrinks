@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Button, Image } from "@tarojs/components";
 import {
   ShoppingAdd,

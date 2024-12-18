@@ -1,5 +1,5 @@
-import { View } from "@tarojs/components";
 import React, { useState } from "react";
+import { View } from "@tarojs/components";
 import { Button, Form, Input, Radio, Cell } from "@nutui/nutui-react-taro";
 import { ArrowRight } from "@nutui/icons-react-taro";
 import Taro from "@tarojs/taro";

@@ -1,3 +1,4 @@
+import React from "react";
 import Taro from "@tarojs/taro";
 import { useEffect } from "react";
 import { Provider } from "react-redux"; // 引入 Provider

@@ -1,10 +1,12 @@
 import { View, Text } from "@tarojs/components";
 import React, { useMemo, useState } from "react";
 import { Image, Tabs } from "@nutui/nutui-react-taro";
-import { Cart } from "@nutui/icons-react-taro";
+import { Cart, NoReceive } from "@nutui/icons-react-taro";
 import Item from "../../components/orderPage/Item";
 import Taro from "@tarojs/taro";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import BagItem from "../../components/shoppingbag/bagItem";
+import { clearCart } from "../../redux/actions"; // 引入清空购物车的 action
 
 import "./order.less";
 
@@ -55,32 +57,24 @@ const items = [
 
 export default function order() {
   const [tab5value, setTab5value] = useState("0");
+  const [isVisible, setIsVisible] = useState(false);
 
-  // const [totalQuantity, setTotalQuantity] = useState(0);
-  // const [totalPrice, setTotalPrice] = useState(0);
+  const dispatch = useDispatch();
 
   const goToCheckout = () => {
     Taro.navigateTo({ url: "/pages/checkout/checkout" });
   };
-
-  // const cart = useSelector((state) => {
-  //   console.log("Current Redux state", state); // Debugging line
-
-  //   return state.myReducer?.cart || [];
-  // });
 
   const cart = useSelector((state) => {
     if (!state.myReducer) {
       console.error("myReducer not found in state");
       return [];
     }
-    console.log("Cart from Redux", state.myReducer.cart);
+
     return state.myReducer.cart || []; // 确保返回 cart 或空数组
   });
 
   const { totalQuantity, totalPrice } = useMemo(() => {
-    console.log("Calculating totalQuantity and totalPrice for cart:", cart);
-
     const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const totalPrice =
@@ -88,11 +82,25 @@ export default function order() {
         cart.reduce((acc, item) => acc + item.price * item.quantity, 0) * 100
       ) / 100;
 
-    console.log("totalQuantity", totalQuantity);
-    console.log("totalPrice", totalPrice);
-
     return { totalQuantity, totalPrice };
   }, [cart]); // 仅当 cart 改变时才重新计算
+
+  const handleOpen = () => {
+    setIsVisible(true);
+  };
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  const handleClearCart = () => {
+    // 清空购物车
+    dispatch(clearCart());
+
+    setIsVisible(false); // 关闭购物车界面
+
+    Taro.setStorageSync("cart", []); // 同步到本地存储
+  };
 
   const list5 = [
     {
@@ -109,6 +117,7 @@ export default function order() {
           />
           {items.map((item, index) => (
             <Item
+              key={item.id}
               url={item.url}
               name={item.name}
               price={item.price}
@@ -132,6 +141,7 @@ export default function order() {
           />
           {items.map((item, index) => (
             <Item
+              key={item.id}
               url={item.url}
               name={item.name}
               price={item.price}
@@ -155,6 +165,7 @@ export default function order() {
           />
           {items.map((item, index) => (
             <Item
+              key={item.id}
               url={item.url}
               name={item.name}
               price={item.price}
@@ -178,6 +189,7 @@ export default function order() {
           />
           {items.map((item, index) => (
             <Item
+              key={item.id}
               url={item.url}
               name={item.name}
               price={item.price}
@@ -201,6 +213,7 @@ export default function order() {
           />
           {items.map((item, index) => (
             <Item
+              key={item.id}
               url={item.url}
               name={item.name}
               price={item.price}
@@ -214,6 +227,13 @@ export default function order() {
 
   return (
     <View className="tabsPage">
+      {/*遮罩层，当 isVisible 为 true 时显示*/}
+      {isVisible && (
+        <View
+          className="overlay"
+          onClick={handleClose} // 点击遮罩层时关闭
+        />
+      )}
       <Tabs
         style={{
           height: "100vh",
@@ -236,7 +256,7 @@ export default function order() {
       </Tabs>
       {totalQuantity > 0 ? (
         <View className="shopping">
-          <View className="bag">
+          <View className="bag" onClick={handleOpen}>
             <Cart color="#dba853" size={30} className="cart" />
             <View className="circle">{totalQuantity}</View>
             <View className="bagContent">
@@ -250,6 +270,36 @@ export default function order() {
       ) : (
         <View className="shoppingImage">
           <Cart color="#dba853" size={30} className="cart" />
+        </View>
+      )}
+      {isVisible && (
+        <View className="bottomCart">
+          <View className="bottomTop">
+            <View className="box1">已选购商品（{totalQuantity}件）</View>
+            <View className="box2" onClick={handleClearCart}>
+              <NoReceive
+                color="#f14d3a"
+                style={{ marginRight: "5px", marginTop: "2px" }}
+              />
+              清空购物车
+            </View>
+          </View>
+          <View className="bottomList">
+            {cart.length > 0 ? (
+              cart.map((item) => (
+                <BagItem
+                  key={item.id} // 使用 item.id 作为 key
+                  id={item.id}
+                  url={item.url}
+                  name={item.name}
+                  price={item.price}
+                  quantity={item.quantity}
+                />
+              ))
+            ) : (
+              <Text>购物车为空</Text> // 如果 cart 为空，显示提示
+            )}
+          </View>
         </View>
       )}
     </View>

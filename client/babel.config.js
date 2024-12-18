@@ -10,6 +10,7 @@ module.exports = {
         compiler: "webpack5",
       },
     ],
+    "@babel/preset-react", // 添加这个行
   ],
   plugins: [
     "@babel/plugin-proposal-class-properties",

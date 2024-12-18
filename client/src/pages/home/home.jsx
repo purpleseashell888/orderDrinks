@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Button, Image, Text } from "@tarojs/components";
 // import { Cup } from "../../assets/icons/cup.png";
 import {

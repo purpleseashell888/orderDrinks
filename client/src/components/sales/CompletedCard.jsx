@@ -4,13 +4,12 @@ import { Divider } from "@nutui/nutui-react-taro";
 
 import "./SaleCard.less";
 
-export default function SaleCard({
+export default function CompletedCard({
   notes,
   totalPrice,
   items,
   orderId,
-  onReceive,
-  onCancel,
+  onDelete,
 }) {
   return (
     <View className="container">
@@ -41,11 +40,8 @@ export default function SaleCard({
       <View>下单时间：</View>
       <Divider />
       <View className="buttonContainer">
-        <Button size="mini" className="receive" onClick={onReceive}>
-          已收货
-        </Button>
-        <Button size="mini" className="button" onClick={onCancel}>
-          取消订单
+        <Button size="mini" className="cancel" onClick={onDelete}>
+          删除订单
         </Button>
       </View>
     </View>
